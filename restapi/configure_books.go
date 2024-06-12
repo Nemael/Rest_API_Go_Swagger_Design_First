@@ -5,6 +5,7 @@ package restapi
 import (
 	"crypto/tls"
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -91,9 +92,26 @@ func configureAPI(api *operations.BooksAPI) http.Handler {
 		newBook := params.Body
 		_, err = db.Exec("INSERT INTO books (id, title, author, quantity) VALUES (?, ?, ?, ?)", newBook.ID, newBook.Title, newBook.Author, newBook.Quantity)
 		if err != nil {
-			return operations.NewAddBookDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Error inserting into the database")})
+			return operations.NewAddBookDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Error inserting into the database, this id might already be taken")})
 		}
 		return (operations.NewAddBookCreated().WithPayload(newBook))
+	})
+
+	api.DeleteBookHandler = operations.DeleteBookHandlerFunc(func(params operations.DeleteBookParams) middleware.Responder {
+		var book models.Book
+		db, err := getDB()
+		if err != nil {
+			return operations.NewDeleteBookDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Connection to database failed")})
+		}
+		id := params.ID // Query parameter
+		fmt.Println(*id)
+		row := db.QueryRow("SELECT id, title, author, quantity FROM books where id = ?", *id)
+		err = row.Scan(&book.ID, &book.Title, &book.Author, &book.Quantity)
+		if err != nil {
+			return operations.NewDeleteBookDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Book not found")})
+		}
+		db.QueryRow("DELETE FROM books where id = ?", *id)
+		return (operations.NewDeleteBookCreated().WithPayload(&book))
 	})
 
 	api.CheckoutBookHandler = operations.CheckoutBookHandlerFunc(func(params operations.CheckoutBookParams) middleware.Responder {
@@ -140,6 +158,11 @@ func configureAPI(api *operations.BooksAPI) http.Handler {
 	if api.AddBookHandler == nil {
 		api.AddBookHandler = operations.AddBookHandlerFunc(func(params operations.AddBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation operations.AddBook has not yet been implemented")
+		})
+	}
+	if api.DeleteBookHandler == nil {
+		api.DeleteBookHandler = operations.DeleteBookHandlerFunc(func(params operations.DeleteBookParams) middleware.Responder {
+			return middleware.NotImplemented("operation operations.DeleteBook has not yet been implemented")
 		})
 	}
 	if api.CheckoutBookHandler == nil {

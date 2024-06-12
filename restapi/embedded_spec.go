@@ -115,6 +115,32 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a book",
+        "operationId": "deleteBook",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Delete book",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "default": {
+            "description": "generic error response",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/checkout": {
@@ -308,6 +334,32 @@ func init() {
           },
           "default": {
             "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book",
+        "operationId": "deleteBook",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Delete book",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          "default": {
+            "description": "generic error response",
             "schema": {
               "$ref": "#/definitions/error"
             }

@@ -134,8 +134,8 @@ definitions:
 # Commands:
 - `go get -u github.com/go-swagger/go-swagger/cmd/swagger`
 - `go mod init [NAME_OF_FOLDER]`
-- `swagger generate server -A Rest_API_Swagger_Design_First -f ./swagger.yaml`
-- `swagger generate client -A Rest_API_Swagger_Design_First -f ./swagger.yaml`
+- `swagger generate server -A Books -f ./swagger.yaml`
+- `swagger generate client -A Book -f ./swagger.yaml`
 - `go get github.com/go-openapi/runtime`
 - `go get github.com/jessevdk/go-flags`
 - OR `go mod tidy`
@@ -145,6 +145,7 @@ definitions:
 - `curl -i http://127.0.0.1:34839/api/v1/books` to test the API, verify that /api/v1 is included
 - `curl -i http://127.0.0.1:8080/api/v1/books -d '{"author":"Adeline","id":4,"quantity":2,"title":"Colors for adults"}' -H 'Content-Type: application/json'` to add a new book
 - `curl -i http://127.0.0.1:8080/api/v1/checkout?id=1 --request PATCH`
+- `go run ./cmd/books-server/main.go --port="8080"` to start the server on port 8080
 
 # Swagger.yaml setup
 - Great example at `https://goswagger.io/go-swagger/tutorial/todo-list`
@@ -155,3 +156,10 @@ definitions:
 
 # After generation
 - Edit `restapi/configure_books.go` The file is safe to edit. You can set mysql or data storage in there. There you can access the handlers
+
+# git
+- `git reset HEAD --hard` to reset to the HEAD
+
+# TODO
+- I don't know why, but the server is not opening at port 8080, I have to resolve this
+
